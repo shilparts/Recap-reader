@@ -17,7 +17,8 @@ function renderList(){
   $('#main').innerHTML=`<input type="search" id="search" placeholder="Search all projects" value="${esc(query)}" aria-label="Search all projects">`+
    (query?(results.length?results.map(r=>`<button class="card" data-open="${esc(r.key)}"><div class="meta">${esc(r.project)} · ${esc(r.label)}</div><p>${esc(r.text)}</p></button>`).join(''):'<p class="empty">Nothing approved matches.</p>'):
    library.length?library.slice().sort((a,b)=>Date.parse(b.transfer.exportedAt)-Date.parse(a.transfer.exportedAt)).map(e=>{const p=e.transfer.project,next=p.context?.next?.trim();return `<button class="card" data-open="${esc(e.key)}"><h2>${esc(p.name)}</h2>${next?`<p>Next: ${esc(next)}</p>`:''}<div class="meta">${esc(freshness(e.transfer.exportedAt))}</div></button>`;}).join(''):
-   `<div class="card"><h2>No projects yet</h2><p>On your PC, open a project in Recap, choose Continue project, then Transfer project. Send the downloaded .recap.json file to this phone and add it here.</p><p class="meta">Files stay on this phone. Nothing is uploaded.</p></div>`);
+   `<div class="card"><h2>No projects yet</h2><p>To bring a project to this phone:</p><ol><li>On your PC, open the project in Recap, choose <b>Continue project</b>, then <b>Transfer project</b>. A file ending in <b>.recap.json</b> is downloaded.</li><li>Send that file to this phone, for example email it to yourself or put it in Google Drive.</li><li>On the phone, download it from the email or Drive, then tap <b>Add project file</b> here. If the list starts on Recents, tap ☰ and choose <b>Downloads</b> or <b>Drive</b>.</li></ol><p class="meta">Files stay on this phone. Nothing is uploaded.</p></div><div class="actions"><button id="sample" class="secondary">Try a sample project</button></div>`);
+  if($('#sample'))$('#sample').onclick=async()=>{try{const response=await fetch('sample.recap.json');if(!response.ok)throw Error('Sample not available offline yet.');await addFiles([{name:'sample.recap.json',text:()=>response.text()}]);}catch(error){toast(error.message);}};
   const input=$('#search');input.oninput=()=>{query=input.value;renderList();const again=$('#search');again.focus();again.setSelectionRange(query.length,query.length);};
 }
 function renderProject(entry){
@@ -48,14 +49,15 @@ function renderProject(entry){
 }
 $('#back').onclick=renderList;
 $('#main').addEventListener('click',e=>{const b=e.target.closest('[data-open]');if(b)renderProject(library.find(x=>x.key===b.dataset.open));});
-$('#file').onchange=async e=>{
+async function addFiles(files){
   const messages=[];
-  for(const file of e.target.files){
+  for(const file of files){
     try{const result=addTransfer(library,await file.text());if(result.status!=='unchanged')await store('readwrite',s=>s.put(result.entry));library=result.library;messages.push(`${result.entry.transfer.project.name}: ${result.status==='replaced'?'updated to the newer copy':result.status==='added'?'added':'already here'}`);}
     catch(error){messages.push(`${file.name}: ${error.message}`);}
   }
-  e.target.value='';renderList();toast(messages.join(' · '));
-};
+  renderList();toast(messages.join(' · '));
+}
+$('#file').onchange=async e=>{await addFiles([...e.target.files]);e.target.value='';};
 // Show the page at once; stored projects appear when storage answers (some phones are slow or block it).
 renderList();
 Promise.race([loadAll(),new Promise((_,reject)=>setTimeout(()=>reject(Error('timeout')),5000))])
