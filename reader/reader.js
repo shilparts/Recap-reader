@@ -56,6 +56,9 @@ $('#file').onchange=async e=>{
   }
   e.target.value='';renderList();toast(messages.join(' · '));
 };
-try{library=await loadAll();}catch{toast('This browser cannot store projects. Try Chrome.');}
+// Show the page at once; stored projects appear when storage answers (some phones are slow or block it).
 renderList();
+Promise.race([loadAll(),new Promise((_,reject)=>setTimeout(()=>reject(Error('timeout')),5000))])
+  .then(all=>{library=all||[];if(!current)renderList();})
+  .catch(()=>toast('Saved projects could not be opened on this phone. Try reloading, or use Chrome.'));
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
