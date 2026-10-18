@@ -4,6 +4,8 @@ A small web app that keeps copies of your Recap projects on the phone and works 
 
 What it shows: next action, goal and progress first, then approved decisions, open tasks and questions. Rejected options, proposals, AI statements and superseded decisions each have their own section. Unreviewed findings and ignored sources are never shown. Every project shows when it was exported, so an old copy can't be mistaken for the current state. **Copy handoff** and **Share** send the handoff to an AI app.
 
+Adding: **Add project files** takes one or many files at once; **Add project folder** reads every project file in a folder and skips anything else, with a list of what was skipped. Phones that cannot pick folders (iPhones, some Android browsers) get an explanation and use multi-select instead. Only files exported with Continue project → Transfer project are read; ordinary documents are not analysed.
+
 Storage: projects are kept in the phone browser's own storage (IndexedDB). Nothing is uploaded. Adding a newer file of the same project replaces the older copy; an older file is refused.
 
 ## Try it on the PC

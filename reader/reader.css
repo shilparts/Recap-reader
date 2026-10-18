@@ -19,3 +19,4 @@ details summary{cursor:pointer;padding:8px 0;font-weight:600}
 #toast{position:fixed;left:16px;right:16px;bottom:16px;max-width:480px;margin:0 auto;background:#263b36;color:#fff;border-radius:10px;padding:12px;opacity:0;transition:opacity .2s;pointer-events:none}#toast.show{opacity:1}
 @media(prefers-color-scheme:dark){:root{color:#e7ece4;background:#151a18;--muted:#a6b0a8;--line:#2d3632;--card:#1e2522;--amber:#f0c27a;--amber-bg:#3a2e1a}.actions button.secondary{background:#2d3632;color:#e7ece4}.import{background:#3b4a42;color:#fff}}
 ol{padding-left:20px;margin:8px 0}ol li{margin:6px 0;line-height:1.45}
+.add-bar{margin-bottom:12px}.add-bar .actions{margin:0 0 6px}.add-bar .meta{font-size:13px;line-height:1.45}.result h3{margin:0 0 6px}.text-button{border:0;background:none;color:inherit;text-decoration:underline;padding:6px 0;cursor:pointer}

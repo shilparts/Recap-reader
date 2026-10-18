@@ -13,6 +13,30 @@ export function addTransfer(library,text){
   return {library:[...library.filter(e=>e.key!==key),entry],status:existing?'replaced':'added',entry};
 }
 
+// Adds every project file among many (a multi-select or a whole folder). Anything that is not a project file is skipped with a reason.
+export const MAX_FILE_BYTES=20*1024*1024;
+export async function addFiles(library,files){
+  const result={library,added:[],replaced:[],unchanged:[],skipped:[]};
+  for(const file of files){
+    const name=file.webkitRelativePath||file.name;
+    if(typeof file.size==='number'&&file.size>MAX_FILE_BYTES){result.skipped.push({name,reason:'too large to be a project file'});continue;}
+    if(/(^|\/)\./.test(name)){result.skipped.push({name,reason:'hidden file'});continue;}
+    let text;try{text=await file.text();}catch{result.skipped.push({name,reason:'could not be read'});continue;}
+    if(!/^\s*\{/.test(text)){result.skipped.push({name,reason:'not a project file'});continue;}
+    try{const r=addTransfer(result.library,text);result.library=r.library;result[r.status].push({name,project:r.entry.transfer.project.name,entry:r.entry});}
+    catch(error){result.skipped.push({name,reason:/Recap project file|valid JSON/.test(error.message)?'not a project file':error.message});}
+  }
+  return result;
+}
+export function addSummary(r){
+  const parts=[];
+  if(r.added.length)parts.push(`${r.added.length} added`);
+  if(r.replaced.length)parts.push(`${r.replaced.length} updated to a newer copy`);
+  if(r.unchanged.length)parts.push(`${r.unchanged.length} already here`);
+  if(r.skipped.length)parts.push(`${r.skipped.length} skipped`);
+  return parts.length?parts.join(', ')+'.':'No files were chosen.';
+}
+
 export function ageInDays(exportedAt,now=Date.now()){return Math.max(0,Math.floor((now-Date.parse(exportedAt))/86400000));}
 export function freshness(exportedAt,now=Date.now()){
   const days=ageInDays(exportedAt,now);
