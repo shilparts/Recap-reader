@@ -24,7 +24,7 @@ export async function addFiles(library,files){
     let text;try{text=await file.text();}catch{result.skipped.push({name,reason:'could not be read'});continue;}
     if(!/^\s*\{/.test(text)){result.skipped.push({name,reason:'not a project file'});continue;}
     try{const r=addTransfer(result.library,text);result.library=r.library;result[r.status].push({name,project:r.entry.transfer.project.name,entry:r.entry});}
-    catch(error){result.skipped.push({name,reason:/Recap project file|valid JSON/.test(error.message)?'not a project file':error.message});}
+    catch(error){result.skipped.push({name,reason:/project file, not a workspace backup|valid JSON/.test(error.message)?'not a project file':error.message});}
   }
   return result;
 }
@@ -62,7 +62,7 @@ export function projectView(project){
 }
 
 export function handoffText(entry){
-  return handoff(entry.transfer.project)+`\nPhone copy exported from Recap on ${entry.transfer.exportedAt}; later changes on the PC are not included.\n`;
+  return handoff(entry.transfer.project)+`\nPhone copy exported from Deewanji on ${entry.transfer.exportedAt}; later changes on the PC are not included.\n`;
 }
 
 export function searchLibrary(library,query){

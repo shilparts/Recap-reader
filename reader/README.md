@@ -1,6 +1,8 @@
-# Recap Reader (Android companion, first version)
+# Deewanji Reader (Android companion, first version)
 
-A small web app that keeps copies of your Recap projects on the phone and works offline. It reads the `.recap.json` file made by **Continue project → Transfer project** on the PC. It only reads; editing stays on the PC.
+Deewanji was called Recap until October 2026. Older `.recap.json` exports still work.
+
+A small web app that keeps copies of your Deewanji projects on the phone and works offline. It reads the `.deewanji.json` (or older `.recap.json`) file made by **Continue project → Transfer project** on the PC. It only reads; editing stays on the PC.
 
 What it shows: next action, goal and progress first, then approved decisions, open tasks and questions. Rejected options, proposals, AI statements and superseded decisions each have their own section. Unreviewed findings and ignored sources are never shown. Every project shows when it was exported, so an old copy can't be mistaken for the current state. **Copy handoff** and **Share** send the handoff to an AI app.
 
@@ -10,7 +12,7 @@ Storage: projects are kept in the phone browser's own storage (IndexedDB). Nothi
 
 ## Try it on the PC
 
-Start Recap and open http://127.0.0.1:4173/reader/.
+Start Deewanji and open http://127.0.0.1:4173/reader/.
 
 ## Put it on the phone
 
